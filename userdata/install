@@ -1,0 +1,13 @@
+sudo yum install jq -y
+
+TEMP_GOCONTAINER_SECGRP=`aws ec2 describe-security-groups --region us-west-2 | jq '.SecurityGroups | .[] | select((.GroupName | contains("gocontainer"))) | .GroupId' | sed s/\"//g` &> $TMP-1030
+
+aws ec2 authorize-security-group-ingress \
+    --group-id $TEMP_GOCONTAINER_SECGRP \
+    --cidr $1/32 --port 8080 --protocol tcp \
+    --region us-west-2 
+    
+aws ec2 authorize-security-group-ingress \
+    --group-id $TEMP_GOCONTAINER_SECGRP \
+    --cidr $2/32 --port 22 --protocol tcp \
+    --region us-west-2

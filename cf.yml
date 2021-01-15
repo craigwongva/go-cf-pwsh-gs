@@ -1,0 +1,48 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "gocontainer"
+Parameters:
+  IP8080:
+    Type: String
+  IP22:
+    Type: String    
+  githubpassword:
+    Type: String    
+Resources:
+  gocontainersecgrp:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+#     The following name must include the literal 'gocontainer' (see userdata/install).
+      GroupDescription: gocontainersecgrp
+  Server:
+    Type: AWS::EC2::Instance
+    Properties:
+      Tags:
+        - Key: Name
+          Value: gocontainer
+      ImageId: ami-0a36eb8fadc976275
+      InstanceType: t2.micro
+      KeyName:  oregonkeypair
+      SecurityGroupIds: 
+        - !Ref gocontainersecgrp
+#      IamInstanceProfile: RoleForTestingRoles
+      UserData:
+        Fn::Base64:
+          Fn::Join:
+            - ""
+            -
+              - "#!/bin/bash -ex\n" 
+              - "yum install git -y\n"
+              - "sudo -u ec2-user bash -c 'cd /home/ec2-user; git clone https://github.com/craigwongva/go-cf-pwsh-gs.git'\n"
+              - "sudo -u ec2-user bash -c 'cd /home/ec2-user/go-cf-pwsh-gs; ./userdata/install "
+              - !Ref IP8080
+              - " "
+              - !Ref IP22
+              - " "
+              - !Ref githubpassword
+              - "'\n"
+#              - " > /tmp/u02 2>&1'\n"
+Outputs:
+  InstanceID:
+    Description: "The Instance ID"
+    Value: !GetAtt Server.PublicIp
+
