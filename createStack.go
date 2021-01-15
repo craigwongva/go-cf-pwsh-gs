@@ -10,10 +10,12 @@ import (
 )
 
 func main() {
-	stackname := "s1"
+	stackname := "s2"
 	filename := "cf.yml"
 	templateBody, _ := convertFileToString(filename)
 	createStack(stackname, templateBody)
+	waitStackCreateComplete(stackname)
+	describeStacks(stackname)
 }
 
 func createStack(stackname, templateBody string) {
@@ -42,6 +44,7 @@ func createStack(stackname, templateBody string) {
 			&p1,
 			&p2,
 			&p3,
+			&p4,
 		},
 		StackName:    aws.String(stackname),
 		TemplateBody: aws.String(templateBody),
@@ -52,6 +55,43 @@ func createStack(stackname, templateBody string) {
 	}
 
 	fmt.Printf("%s\n", *output.StackId)
+}
+
+func waitStackCreateComplete(stackname string) {
+	svc := cloudformation.New(
+		session.New(),
+		&aws.Config{Region: aws.String(os.Args[3])})
+
+	input := cloudformation.DescribeStacksInput{
+		StackName: aws.String(stackname),
+	}
+
+	err := svc.WaitUntilStackCreateComplete(&input)
+	_ = err
+}
+
+func describeStacks(stackname string) {
+	svc := cloudformation.New(
+		session.New(),
+		&aws.Config{Region: aws.String(os.Args[3])})
+
+	input := cloudformation.DescribeStacksInput{
+		StackName: aws.String(stackname),
+	}
+
+	output, err := svc.DescribeStacks(&input)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	for _, v := range output.Stacks {
+		for _, w := range v.Outputs {
+			//fmt.Printf("@88 %s, %s\n", *w.OutputKey, *w.OutputValue)
+			if *w.OutputKey == "InstanceID" {
+				fmt.Printf("%s:8080/geoserver/web", *w.OutputValue)
+			}
+		}
+	}
 }
 
 func convertFileToString(filename string) (string, error) {
