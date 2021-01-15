@@ -38,5 +38,7 @@ echo tracer007
 sed -i "s#$path_root = 'C:.gs'#$path_root = '/opt/gs'#" Deploy-GS.ps1
 echo tracer008
 
-# The following runs for 15+ minutes.
+# The following runs for 15+ minutes when running pwsh interactively.
+# On a t2.micro, once the CloudFormation stack is ready, the GeoServer
+# web URL responds within 4 minutes.
 sudo pwsh .\\Deploy-GS.ps1 &> /tmp/pwsh-gs

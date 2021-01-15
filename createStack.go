@@ -43,7 +43,14 @@ func createStack(stackname, templateBody string) {
 		ParameterKey:   aws.String("ami"),
 		ParameterValue: aws.String(os.Args[5]),
 	}
-
+	p6 := cloudformation.Parameter{
+		ParameterKey:   aws.String("keypair"),
+		ParameterValue: aws.String(os.Args[6]),
+	}
+	p7 := cloudformation.Parameter{
+		ParameterKey:   aws.String("instancerole"),
+		ParameterValue: aws.String(os.Args[7]),
+	}
 	input := cloudformation.CreateStackInput{
 		Parameters: []*cloudformation.Parameter{
 			&p1,
@@ -51,6 +58,8 @@ func createStack(stackname, templateBody string) {
 			&p3,
 			&p4,
 			&p5,
+			&p6,
+			&p7,
 		},
 		StackName:    aws.String(stackname),
 		TemplateBody: aws.String(templateBody),
@@ -92,9 +101,8 @@ func describeStacks(stackname string) {
 
 	for _, v := range output.Stacks {
 		for _, w := range v.Outputs {
-			//fmt.Printf("@88 %s, %s\n", *w.OutputKey, *w.OutputValue)
 			if *w.OutputKey == "InstanceID" {
-				fmt.Printf("%s:8080/geoserver/web", *w.OutputValue)
+				fmt.Printf("%s:8080/geoserver/web\n", *w.OutputValue)
 			}
 		}
 	}
