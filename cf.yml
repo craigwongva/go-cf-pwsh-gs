@@ -4,14 +4,16 @@ Parameters:
   IP8080:
     Type: String
   IP22:
-    Type: String    
-  githubpassword:
-    Type: String    
+    Type: String
+  region:
+    Type: String
+  ami:
+    Type: String
 Resources:
   gocontainersecgrp:
     Type: AWS::EC2::SecurityGroup
     Properties:
-#     The following name must include the literal 'gocontainer' (see userdata/install).
+#     This property must include the literal 'gocontainer' (see userdata/install).
       GroupDescription: gocontainersecgrp
   Server:
     Type: AWS::EC2::Instance
@@ -19,7 +21,7 @@ Resources:
       Tags:
         - Key: Name
           Value: gocontainer
-      ImageId: ami-0a36eb8fadc976275
+      ImageId: !Ref ami
       InstanceType: t2.micro
       KeyName:  oregonkeypair
       SecurityGroupIds: 
@@ -38,9 +40,8 @@ Resources:
               - " "
               - !Ref IP22
               - " "
-              - !Ref githubpassword
+              - !Ref region
               - "'\n"
-#              - " > /tmp/u02 2>&1'\n"
 Outputs:
   InstanceID:
     Description: "The Instance ID"

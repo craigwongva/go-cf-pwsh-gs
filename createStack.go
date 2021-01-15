@@ -19,7 +19,7 @@ func main() {
 func createStack(stackname, templateBody string) {
 	svc := cloudformation.New(
 		session.New(),
-		&aws.Config{Region: aws.String("us-west-2")})
+		&aws.Config{Region: aws.String(os.Args[3])})
 
 	p1 := cloudformation.Parameter{
 		ParameterKey:   aws.String("IP8080"),
@@ -30,8 +30,12 @@ func createStack(stackname, templateBody string) {
 		ParameterValue: aws.String(os.Args[2]),
 	}
 	p3 := cloudformation.Parameter{
-		ParameterKey:   aws.String("githubpassword"),
+		ParameterKey:   aws.String("region"),
 		ParameterValue: aws.String(os.Args[3]),
+	}
+	p4 := cloudformation.Parameter{
+		ParameterKey:   aws.String("ami"),
+		ParameterValue: aws.String(os.Args[4]),
 	}
 	input := cloudformation.CreateStackInput{
 		Parameters: []*cloudformation.Parameter{
