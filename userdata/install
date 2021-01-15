@@ -17,7 +17,7 @@ whoami
 cd /home/ec2-user
 echo tracer001
 
-aws s3 cp s3://$4 .
+aws s3 cp s3://$4 . --region $3
 echo tracer002
 unzip Deploy-Gs.zip
 echo tracer003
