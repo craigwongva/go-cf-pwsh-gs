@@ -34,8 +34,9 @@ pwd
 echo tracer007
 
 #-->Update Deploy-GS.ps1's first line to '/opt/gs'
-sed -i "s#$path_root = 'C:\gs'#$path_root = '/opt/gs'#" Deploy-GS.ps1
+#--> (Use a regexp dot in "C:.gs" because "C:\gs" backslash causes confusion.)
+sed -i "s#$path_root = 'C:.gs'#$path_root = '/opt/gs'#" Deploy-GS.ps1
 echo tracer008
 
 # The following runs for 15+ minutes.
-#sudo pwsh .\\Deploy-GS.ps1 &> /tmp/pwsh-gs
+sudo pwsh .\\Deploy-GS.ps1 &> /tmp/pwsh-gs
