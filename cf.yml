@@ -7,7 +7,11 @@ Parameters:
     Type: String
   region:
     Type: String
+  gszipbucketobject:
+    Type: String
   ami:
+    Type: String
+  keypair:
     Type: String
 Resources:
   gocontainersecgrp:
@@ -23,7 +27,7 @@ Resources:
           Value: gocontainer
       ImageId: !Ref ami
       InstanceType: t2.micro
-      KeyName:  oregonkeypair
+      KeyName:  !Ref keypair
       SecurityGroupIds: 
         - !Ref gocontainersecgrp
       IamInstanceProfile: go_cf_pwsh_gs
@@ -41,6 +45,8 @@ Resources:
               - !Ref IP22
               - " "
               - !Ref region
+              - " "
+              - !Ref gszipbucketobject
               - "'\n"
 Outputs:
   InstanceID:

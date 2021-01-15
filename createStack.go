@@ -36,15 +36,21 @@ func createStack(stackname, templateBody string) {
 		ParameterValue: aws.String(os.Args[3]),
 	}
 	p4 := cloudformation.Parameter{
-		ParameterKey:   aws.String("ami"),
+		ParameterKey:   aws.String("gszipbucketobject"),
 		ParameterValue: aws.String(os.Args[4]),
 	}
+	p5 := cloudformation.Parameter{
+		ParameterKey:   aws.String("ami"),
+		ParameterValue: aws.String(os.Args[5]),
+	}
+
 	input := cloudformation.CreateStackInput{
 		Parameters: []*cloudformation.Parameter{
 			&p1,
 			&p2,
 			&p3,
 			&p4,
+			&p5,
 		},
 		StackName:    aws.String(stackname),
 		TemplateBody: aws.String(templateBody),
