@@ -11,3 +11,28 @@ aws ec2 authorize-security-group-ingress \
     --group-id $TEMP_GOCONTAINER_SECGRP \
     --cidr $2/32 --port 22 --protocol tcp \
     --region us-west-2
+
+whoami
+
+cd /home/ec2-user
+echo tracer001
+
+aws s3 cp s3://deleteme1001/Deploy-Gs.zip .
+echo tracer002
+unzip Deploy-Gs.zip
+echo tracer003
+
+wget https://github.com/PowerShell/PowerShell/releases/download/v7.0.3/powershell-lts-7.0.3-1.centos.8.x86_64.rpm
+echo tracer004
+sudo rpm -i powershell-lts-7.0.3-1.centos.8.x86_64.rpm
+echo tracer005
+
+cd Deploy-Gs
+echo tracer006
+#-->Update Deploy-GS.ps1's first line to '/opt/gs'
+sed -i "s#$path_root = 'C:\gs'#$path_root = '/opt/gs'#" Deploy-GS.ps1
+echo tracer007
+
+sudo pwsh
+# The following runs for 15+ minutes.
+.\Deploy-GS.ps1
