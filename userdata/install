@@ -38,4 +38,4 @@ sed -i "s#$path_root = 'C:\gs'#$path_root = '/opt/gs'#" Deploy-GS.ps1
 echo tracer008
 
 # The following runs for 15+ minutes.
-sudo pwsh .\\Deploy-GS.ps1 &> /tmp/pwsh-gs
+#sudo pwsh .\\Deploy-GS.ps1 &> /tmp/pwsh-gs
