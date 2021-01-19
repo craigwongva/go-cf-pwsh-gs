@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudformation"
 	"io/ioutil"
@@ -26,8 +27,9 @@ func createStack(stackname, templateBody string) {
 	svc := cloudformation.New(
 		session.New(),
 		&aws.Config{
-			Region:   aws.String(os.Args[3]),
-			Endpoint: aws.String(e),
+			Region:      aws.String(os.Args[3]),
+			Endpoint:    aws.String(e),
+			Credentials: credentials.NewSharedCredentials("", "guitar"),
 		})
 
 	p1 := cloudformation.Parameter{
