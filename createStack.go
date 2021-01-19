@@ -15,9 +15,11 @@ func main() {
 	stackname := "s2"
 	filename := "cf.yml"
 	templateBody, _ := convertFileToString(filename)
+	fmt.Println("createStack.go@18 I am calling createStack")
 	createStack(stackname, templateBody)
+	fmt.Println("createStack.go@18 I am calling waitStackCreateComplete")
 	waitStackCreateComplete(stackname)
-
+	fmt.Println("createStack.go@18 I am calling describeStacks")
 	describeStacks(stackname)
 }
 
@@ -95,6 +97,7 @@ func waitStackCreateComplete(stackname string) {
 }
 
 func describeStacks(stackname string) {
+	fmt.Println("createStack.go@100 starting")
 	svc := cloudformation.New(
 		session.New(),
 		&aws.Config{Region: aws.String(os.Args[3])})
@@ -108,7 +111,7 @@ func describeStacks(stackname string) {
 		fmt.Println(err)
 	}
 
-	fmt.Println("The stack has been created. I am sleeping 5 minutes while GeoServer installs...")
+	fmt.Println("createStack.go@113 The stack has been created. I am sleeping 5 minutes while GeoServer installs...")
 	time.Sleep(300 * time.Second)
 
 	for _, v := range output.Stacks {
