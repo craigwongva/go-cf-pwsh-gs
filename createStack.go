@@ -12,55 +12,67 @@ import (
 )
 
 func main() {
-	stackname := "s2"
-	filename := "cf.yml"
+
+	IP8080 := os.Args[1]
+	IP22 := os.Args[2]
+	region := os.Args[3]
+	gszipbucketobject := os.Args[4]
+	ami := os.Args[5]
+	keypair := os.Args[6]
+	instancerole := os.Args[7]
+	stackname := os.Args[8]
+	profile := os.Args[9]
+	filename := os.Args[10]
+
 	templateBody, _ := convertFileToString(filename)
-	fmt.Println("createStack.go@18 I am calling createStack")
-	createStack(stackname, templateBody)
-	fmt.Println("createStack.go@18 I am calling waitStackCreateComplete")
-	waitStackCreateComplete(stackname)
-	fmt.Println("createStack.go@18 I am calling describeStacks")
-	describeStacks(stackname)
+
+	createStack(
+		IP8080, IP22, region, gszipbucketobject,
+		ami, keypair, instancerole, stackname, templateBody, profile)
+	waitStackCreateComplete(region, stackname, profile)
+	describeStacks(region, stackname, profile)
 }
 
-func createStack(stackname, templateBody string) {
+func createStack(
+	IP8080, IP22, region, gszipbucketobject,
+	ami, keypair, instancerole, stackname, templateBody, profile string) {
 
-	e := fmt.Sprintf("https://cloudformation.%s.amazonaws.com", os.Args[3])
+	e := fmt.Sprintf("https://cloudformation.%s.amazonaws.com", region)
 	svc := cloudformation.New(
 		session.New(),
 		&aws.Config{
-			Region:      aws.String(os.Args[3]),
+			Region:      aws.String(region),
 			Endpoint:    aws.String(e),
-			Credentials: credentials.NewSharedCredentials("", "guitar"),
+			Credentials: credentials.NewSharedCredentials("", profile),
 		})
 
 	p1 := cloudformation.Parameter{
 		ParameterKey:   aws.String("IP8080"),
-		ParameterValue: aws.String(os.Args[1]),
+		ParameterValue: aws.String(IP8080),
 	}
 	p2 := cloudformation.Parameter{
 		ParameterKey:   aws.String("IP22"),
-		ParameterValue: aws.String(os.Args[2]),
+		ParameterValue: aws.String(IP22),
 	}
 	p3 := cloudformation.Parameter{
 		ParameterKey:   aws.String("region"),
-		ParameterValue: aws.String(os.Args[3]),
+		ParameterValue: aws.String(region),
 	}
 	p4 := cloudformation.Parameter{
 		ParameterKey:   aws.String("gszipbucketobject"),
-		ParameterValue: aws.String(os.Args[4]),
+		ParameterValue: aws.String(gszipbucketobject),
 	}
 	p5 := cloudformation.Parameter{
 		ParameterKey:   aws.String("ami"),
-		ParameterValue: aws.String(os.Args[5]),
+		ParameterValue: aws.String(ami),
 	}
 	p6 := cloudformation.Parameter{
 		ParameterKey:   aws.String("keypair"),
-		ParameterValue: aws.String(os.Args[6]),
+		ParameterValue: aws.String(keypair),
 	}
 	p7 := cloudformation.Parameter{
 		ParameterKey:   aws.String("instancerole"),
-		ParameterValue: aws.String(os.Args[7]),
+		ParameterValue: aws.String(instancerole),
 	}
 	input := cloudformation.CreateStackInput{
 		Parameters: []*cloudformation.Parameter{
@@ -80,18 +92,18 @@ func createStack(stackname, templateBody string) {
 		fmt.Println(err)
 	}
 
-	fmt.Printf("%s\n", *output.StackId)
+	fmt.Printf("The stack is being created: %s\n", *output.StackId)
 }
 
-func waitStackCreateComplete(stackname string) {
+func waitStackCreateComplete(region, stackname, profile string) {
 
-	e := fmt.Sprintf("https://cloudformation.%s.amazonaws.com", os.Args[3])
+	e := fmt.Sprintf("https://cloudformation.%s.amazonaws.com", region)
 	svc := cloudformation.New(
 		session.New(),
 		&aws.Config{
-			Region:      aws.String(os.Args[3]),
+			Region:      aws.String(region),
 			Endpoint:    aws.String(e),
-			Credentials: credentials.NewSharedCredentials("", "guitar"),
+			Credentials: credentials.NewSharedCredentials("", profile),
 		})
 
 	input := cloudformation.DescribeStacksInput{
@@ -102,16 +114,15 @@ func waitStackCreateComplete(stackname string) {
 	_ = err
 }
 
-func describeStacks(stackname string) {
-	fmt.Println("createStack.go@100 starting")
+func describeStacks(region, stackname, profile string) {
 
-	e := fmt.Sprintf("https://cloudformation.%s.amazonaws.com", os.Args[3])
+	e := fmt.Sprintf("https://cloudformation.%s.amazonaws.com", region)
 	svc := cloudformation.New(
 		session.New(),
 		&aws.Config{
-			Region:      aws.String(os.Args[3]),
+			Region:      aws.String(region),
 			Endpoint:    aws.String(e),
-			Credentials: credentials.NewSharedCredentials("", "guitar"),
+			Credentials: credentials.NewSharedCredentials("", profile),
 		})
 
 	input := cloudformation.DescribeStacksInput{
@@ -123,7 +134,7 @@ func describeStacks(stackname string) {
 		fmt.Println(err)
 	}
 
-	fmt.Println("createStack.go@113 The stack has been created. I am sleeping 5 minutes while GeoServer installs...")
+	fmt.Printf("Stack %s has been created. I am sleeping 5 minutes while GeoServer installs...", stackname)
 	time.Sleep(300 * time.Second)
 
 	for _, v := range output.Stacks {
