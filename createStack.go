@@ -86,7 +86,11 @@ func createStack(stackname, templateBody string) {
 func waitStackCreateComplete(stackname string) {
 	svc := cloudformation.New(
 		session.New(),
-		&aws.Config{Region: aws.String(os.Args[3])})
+		&aws.Config{
+			Region:      aws.String(os.Args[3]),
+			Endpoint:    aws.String(e),
+			Credentials: credentials.NewSharedCredentials("", "guitar"),
+		})
 
 	input := cloudformation.DescribeStacksInput{
 		StackName: aws.String(stackname),
@@ -100,7 +104,11 @@ func describeStacks(stackname string) {
 	fmt.Println("createStack.go@100 starting")
 	svc := cloudformation.New(
 		session.New(),
-		&aws.Config{Region: aws.String(os.Args[3])})
+		&aws.Config{
+			Region:      aws.String(os.Args[3]),
+			Endpoint:    aws.String(e),
+			Credentials: credentials.NewSharedCredentials("", "guitar"),
+		})
 
 	input := cloudformation.DescribeStacksInput{
 		StackName: aws.String(stackname),
