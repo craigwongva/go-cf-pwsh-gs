@@ -21,9 +21,14 @@ func main() {
 }
 
 func createStack(stackname, templateBody string) {
+
+	e := fmt.Sprintf("https://cloudformation.%s.amazonaws.com", os.Args[3])
 	svc := cloudformation.New(
 		session.New(),
-		&aws.Config{Region: aws.String(os.Args[3])})
+		&aws.Config{
+			Region:   aws.String(os.Args[3]),
+			Endpoint: aws.String(e),
+		})
 
 	p1 := cloudformation.Parameter{
 		ParameterKey:   aws.String("IP8080"),
