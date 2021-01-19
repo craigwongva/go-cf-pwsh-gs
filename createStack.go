@@ -7,6 +7,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/cloudformation"
 	"io/ioutil"
 	"os"
+	"time"
 )
 
 func main() {
@@ -15,6 +16,7 @@ func main() {
 	templateBody, _ := convertFileToString(filename)
 	createStack(stackname, templateBody)
 	waitStackCreateComplete(stackname)
+
 	describeStacks(stackname)
 }
 
@@ -99,10 +101,13 @@ func describeStacks(stackname string) {
 		fmt.Println(err)
 	}
 
+	fmt.Println("The stack has been created. I am sleeping 5 minutes while GeoServer installs...")
+	time.Sleep(300 * time.Second)
+
 	for _, v := range output.Stacks {
 		for _, w := range v.Outputs {
 			if *w.OutputKey == "InstanceID" {
-				fmt.Printf("%s:8080/geoserver/web\n", *w.OutputValue)
+				fmt.Printf("GeoServer is ready here: %s:8080/geoserver/web\n", *w.OutputValue)
 			}
 		}
 	}
