@@ -84,6 +84,8 @@ func createStack(stackname, templateBody string) {
 }
 
 func waitStackCreateComplete(stackname string) {
+
+	e := fmt.Sprintf("https://cloudformation.%s.amazonaws.com", os.Args[3])
 	svc := cloudformation.New(
 		session.New(),
 		&aws.Config{
@@ -102,6 +104,8 @@ func waitStackCreateComplete(stackname string) {
 
 func describeStacks(stackname string) {
 	fmt.Println("createStack.go@100 starting")
+
+	e := fmt.Sprintf("https://cloudformation.%s.amazonaws.com", os.Args[3])
 	svc := cloudformation.New(
 		session.New(),
 		&aws.Config{
